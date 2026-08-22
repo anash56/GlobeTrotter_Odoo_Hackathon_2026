@@ -15,12 +15,10 @@ export function PreviousTripsSection({
   return (
     <section className="previous-trips-section" id="previous-trips">
       <div className="section-header">
-        <div>
-          <div className="section-subtitle">
-            <Plane size={14} /> Personal Itineraries
-          </div>
-          <h2 className="section-title">Previous Trips</h2>
+        <div className="section-subtitle">
+          <Plane size={14} /> Personal Itineraries
         </div>
+        <h2 className="section-title">Previous Trips</h2>
         <p className="section-desc">
           Your saved personal journeys, itineraries, and past travel memories.
         </p>

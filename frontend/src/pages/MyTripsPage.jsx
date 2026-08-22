@@ -375,7 +375,7 @@ export function MyTripsPage() {
             </p>
             <Link to="/trips/create" className="btn-empty-create-trip">
               <Plus size={18} />
-              <span>+ Plan Your First Trip</span>
+              <span>Plan Your First Trip</span>
             </Link>
           </div>
         ) : filteredAndSortedTrips.length === 0 ? (

@@ -2,14 +2,21 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Compass, Plus, LogOut, Menu, X, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { LogoutConfirmationModal } from './LogoutConfirmationModal';
 
 export function AppNavbar() {
   const { currentUser, logoutUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-  const handleLogout = () => {
+  const handleOpenLogoutModal = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const handleConfirmLogout = () => {
+    setIsLogoutModalOpen(false);
     logoutUser();
     navigate('/login');
   };
@@ -78,7 +85,7 @@ export function AppNavbar() {
               <button 
                 type="button" 
                 className="btn-logout-icon" 
-                onClick={handleLogout} 
+                onClick={handleOpenLogoutModal} 
                 title="Sign Out"
                 aria-label="Sign Out"
               >
@@ -114,7 +121,13 @@ export function AppNavbar() {
           <Link to="/profile" className={isProfileActive ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>Profile</Link>
           <Link to="/trips/create" onClick={() => setMobileMenuOpen(false)}>+ Plan a Trip</Link>
           {currentUser ? (
-            <button type="button" onClick={() => { setMobileMenuOpen(false); handleLogout(); }}>
+            <button 
+              type="button" 
+              onClick={() => { 
+                setMobileMenuOpen(false); 
+                handleOpenLogoutModal(); 
+              }}
+            >
               Sign Out ({currentUser.name})
             </button>
           ) : (
@@ -122,6 +135,13 @@ export function AppNavbar() {
           )}
         </div>
       )}
+
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmationModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleConfirmLogout}
+      />
     </>
   );
 }
