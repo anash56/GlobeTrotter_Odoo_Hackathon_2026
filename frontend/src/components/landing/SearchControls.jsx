@@ -17,13 +17,13 @@ export function SearchControls({
   return (
     <div className="search-controls-container" id="search-section">
       <div className="search-controls-card">
-        {/* Prominent Search Field */}
+        {/* Prominent Search Field (Wireframe: Search bar ......) */}
         <div className="search-input-wrapper">
           <Search className="search-icon" size={20} />
           <input
             type="text"
             className="search-input"
-            placeholder="Search destinations, cities, countries..."
+            placeholder="Search bar ......"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -39,12 +39,12 @@ export function SearchControls({
           )}
         </div>
 
-        {/* Filter & Sort Controls Grid */}
+        {/* Filter & Sort Controls Grid (Wireframe: Group by | Filter | Sort by...) */}
         <div className="controls-grid">
           {/* Group By Select */}
           <div className="control-group">
             <label className="control-label">
-              <Layers size={14} /> Region
+              <Layers size={14} /> Group by
             </label>
             <select
               className="control-select"
@@ -63,7 +63,7 @@ export function SearchControls({
           {/* Filter By Cost */}
           <div className="control-group">
             <label className="control-label">
-              <Filter size={14} /> Cost Index
+              <Filter size={14} /> Filter
             </label>
             <select
               className="control-select"
@@ -80,7 +80,7 @@ export function SearchControls({
           {/* Sort By Select */}
           <div className="control-group">
             <label className="control-label">
-              <ArrowUpDown size={14} /> Sort By
+              <ArrowUpDown size={14} /> Sort by...
             </label>
             <select
               className="control-select"

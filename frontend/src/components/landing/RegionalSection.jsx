@@ -48,7 +48,7 @@ export function RegionalSection({ onSelectRegion }) {
           <div className="section-subtitle">
             <Compass size={14} /> Discovery Hub
           </div>
-          <h2 className="section-title">Explore Top Destinations</h2>
+          <h2 className="section-title">Top Regional Selections</h2>
         </div>
         <p className="section-desc">
           Handpicked world regions offering unforgettable adventures and curated travel experiences.

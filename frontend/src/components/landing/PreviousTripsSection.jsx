@@ -34,7 +34,7 @@ export function PreviousTripsSection({
         </div>
       ) : error ? (
         <div className="trips-error-state">
-          <AlertCircle size={28} color="#E11D48" />
+          <AlertCircle size={28} color="#EF4444" />
           <p>{error}</p>
           <button type="button" className="btn-retry" onClick={onRetry}>
             <RefreshCw size={14} /> Retry

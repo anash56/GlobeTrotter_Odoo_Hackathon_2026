@@ -55,7 +55,7 @@ export function LandingNavbar({ currentUser, onOpenAuth, onLogout, onPlanTrip })
             </button>
           )}
 
-          {/* Mobile Menu Toggle Button */}
+          {/* Mobile Menu Toggle */}
           <button 
             type="button" 
             className="mobile-menu-toggle"
@@ -67,7 +67,7 @@ export function LandingNavbar({ currentUser, onOpenAuth, onLogout, onPlanTrip })
         </div>
       </div>
 
-      {/* Responsive Mobile Menu Drawer */}
+      {/* Responsive Mobile Drawer */}
       {isMobileMenuOpen && (
         <div className="mobile-nav-drawer">
           <a href="#hero" onClick={() => setIsMobileMenuOpen(false)}>Home</a>

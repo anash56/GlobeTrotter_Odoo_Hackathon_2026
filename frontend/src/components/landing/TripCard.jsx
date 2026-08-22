@@ -8,7 +8,6 @@ export function TripCard({ trip }) {
     return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
-  // Calculate duration in days
   const calculateDuration = (startStr, endStr) => {
     if (!startStr || !endStr) return null;
     const start = new Date(startStr);
@@ -23,7 +22,6 @@ export function TripCard({ trip }) {
   const stopsText = stopCount === 1 ? '1 Stop' : `${stopCount} Stops`;
 
   const handleTripClick = () => {
-    // Navigate to trip details route /trips/:id
     window.location.hash = `#trips-${trip.id}`;
   };
 

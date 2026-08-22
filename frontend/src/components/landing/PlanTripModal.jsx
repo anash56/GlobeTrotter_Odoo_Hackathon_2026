@@ -16,11 +16,6 @@ export function PlanTripModal({ isOpen, onClose, onSubmit, isLoading, isLoggedIn
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isLoggedIn) {
-      setError('Please sign in to save your trip.');
-      return;
-    }
-
     if (!formData.title.trim()) {
       setError('Please enter a trip title.');
       return;
@@ -49,110 +44,88 @@ export function PlanTripModal({ isOpen, onClose, onSubmit, isLoading, isLoggedIn
           Set up your destination, trip dates, and budget estimate.
         </p>
 
-        {!isLoggedIn ? (
-          <div className="modal-auth-warning">
-            <AlertCircle size={20} color="#F97360" />
-            <div>
-              <p style={{ fontWeight: 600, color: '#17211F' }}>Authentication Required</p>
-              <p style={{ fontSize: '0.85rem', color: '#66736F' }}>
-                Please sign in to associate your new trip with your GlobeTrotter account.
-              </p>
+        <form onSubmit={handleSubmit} className="plan-trip-form">
+          {error && (
+            <div className="modal-error">
+              <AlertCircle size={16} /> {error}
             </div>
-            <button
-              type="button"
-              className="btn-modal-signin"
-              onClick={() => {
-                onClose();
-                onOpenAuth();
-              }}
-            >
-              Sign In Now
-            </button>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="plan-trip-form">
-            {error && (
-              <div className="modal-error">
-                <AlertCircle size={16} /> {error}
-              </div>
-            )}
+          )}
 
+          <div className="form-field">
+            <label>Trip Title *</label>
+            <div className="input-with-icon">
+              <MapPin size={16} className="field-icon" />
+              <input
+                type="text"
+                placeholder="e.g. Summer in Tokyo & Kyoto"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-field">
+            <label>Short Description</label>
+            <textarea
+              placeholder="Key highlights, notes, or companion details..."
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              rows={3}
+            />
+          </div>
+
+          <div className="form-row">
             <div className="form-field">
-              <label>Trip Title *</label>
+              <label>Start Date *</label>
               <div className="input-with-icon">
-                <MapPin size={16} className="field-icon" />
+                <Calendar size={16} className="field-icon" />
                 <input
-                  type="text"
-                  placeholder="e.g. Summer in Tokyo & Kyoto"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  type="date"
+                  value={formData.startDate}
+                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                   required
                 />
               </div>
             </div>
 
             <div className="form-field">
-              <label>Short Description</label>
-              <textarea
-                placeholder="Key highlights, notes, or companion details..."
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={3}
-              />
-            </div>
-
-            <div className="form-row">
-              <div className="form-field">
-                <label>Start Date *</label>
-                <div className="input-with-icon">
-                  <Calendar size={16} className="field-icon" />
-                  <input
-                    type="date"
-                    value={formData.startDate}
-                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-field">
-                <label>End Date *</label>
-                <div className="input-with-icon">
-                  <Calendar size={16} className="field-icon" />
-                  <input
-                    type="date"
-                    value={formData.endDate}
-                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="form-field">
-              <label>Total Estimated Budget ($)</label>
+              <label>End Date *</label>
               <div className="input-with-icon">
-                <DollarSign size={16} className="field-icon" />
+                <Calendar size={16} className="field-icon" />
                 <input
-                  type="number"
-                  placeholder="e.g. 1500"
-                  value={formData.totalBudget}
-                  onChange={(e) => setFormData({ ...formData, totalBudget: e.target.value })}
+                  type="date"
+                  value={formData.endDate}
+                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                  required
                 />
               </div>
             </div>
+          </div>
 
-            <button type="submit" className="btn-save-trip" disabled={isLoading}>
-              {isLoading ? (
-                <>Creating Trip...</>
-              ) : (
-                <>
-                  <Plus size={18} /> Save Trip Itinerary
-                </>
-              )}
-            </button>
-          </form>
-        )}
+          <div className="form-field">
+            <label>Total Estimated Budget ($)</label>
+            <div className="input-with-icon">
+              <DollarSign size={16} className="field-icon" />
+              <input
+                type="number"
+                placeholder="e.g. 1500"
+                value={formData.totalBudget}
+                onChange={(e) => setFormData({ ...formData, totalBudget: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <button type="submit" className="btn-save-trip" disabled={isLoading}>
+            {isLoading ? (
+              <>Creating Trip...</>
+            ) : (
+              <>
+                <Plus size={18} /> Save Trip Itinerary
+              </>
+            )}
+          </button>
+        </form>
       </div>
     </div>
   );
