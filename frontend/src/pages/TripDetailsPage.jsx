@@ -89,16 +89,12 @@ export function TripDetailsPage({ tripId: propTripId, onBack, currentUser: propU
 
   return (
     <div className="trip-details-container">
-      {/* Top Bar */}
-      <header className="trip-details-header">
+      {/* Subheader Navigation */}
+      <div className="trip-details-subnav">
         <button className="btn-back" onClick={handleBack}>
-          <ArrowLeft size={18} /> Back to Trips
+          <ArrowLeft size={16} /> Back to Trips
         </button>
-        <div className="brand-badge">
-          <Compass size={22} className="brand-logo-icon" />
-          <span className="brand-name">GlobeTrotter</span>
-        </div>
-      </header>
+      </div>
 
       {/* Hero Banner */}
       <div className="trip-hero-banner" style={{ backgroundImage: `url(${trip.coverPhotoUrl || city?.imageUrl})` }}>

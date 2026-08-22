@@ -154,26 +154,12 @@ export function CreateTripPage({ currentUser: propUser, onTripCreated, onCancel 
 
   return (
     <div className="create-trip-container">
-      {/* Top Navbar */}
-      <header className="create-trip-header">
-        <div className="header-left">
-          <button type="button" className="btn-back" onClick={handleCancelAction}>
-            <ArrowLeft size={18} /> Back
-          </button>
-          <div className="brand-badge">
-            <Compass size={22} className="brand-logo-icon" />
-            <span className="brand-name">GlobeTrotter</span>
-          </div>
-        </div>
-        <div className="user-profile-badge">
-          <img 
-            src={currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80'} 
-            alt={currentUser?.name} 
-            className="user-avatar"
-          />
-          <span>{currentUser?.name}</span>
-        </div>
-      </header>
+      {/* Subheader Navigation */}
+      <div className="create-trip-subnav">
+        <button type="button" className="btn-back" onClick={handleCancelAction}>
+          <ArrowLeft size={16} /> Back to Trips
+        </button>
+      </div>
 
       {/* Main Content Layout */}
       <main className="create-trip-main">

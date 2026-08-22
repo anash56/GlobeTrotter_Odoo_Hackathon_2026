@@ -8,6 +8,7 @@ import { AuthPage } from '../pages/AuthPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { ProfilePage } from '../pages/ProfilePage';
 import { MyTripsPage } from '../pages/MyTripsPage';
+import { CalendarPage } from '../pages/CalendarPage';
 import { CreateTripPage } from '../pages/CreateTripPage';
 import { TripDetailsPage } from '../pages/TripDetailsPage';
 import { BuildItineraryPage } from '../pages/BuildItineraryPage';
@@ -70,6 +71,7 @@ export function AppRoutes() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/my-trips" element={<MyTripsPage />} />
         <Route path="/trips" element={<MyTripsPage />} />
+        <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/trips/create" element={<CreateTripPage />} />
         <Route path="/create-trip" element={<CreateTripPage />} />
