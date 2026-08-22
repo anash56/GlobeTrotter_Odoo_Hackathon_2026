@@ -8,6 +8,9 @@ import {
   updateActivityService,
   deleteActivityService,
   reorderActivitiesService,
+  createExpenseService,
+  updateExpenseService,
+  deleteExpenseService,
 } from '../services/itineraryService.js';
 
 /**
@@ -189,5 +192,65 @@ export const reorderActivities = async (req, res) => {
   } catch (error) {
     const statusCode = error.statusCode || 500;
     return res.status(statusCode).json({ error: error.message || 'Failed to reorder activities.' });
+  }
+};
+
+/**
+ * @desc    Create a new expense for trip
+ * @route   POST /api/trips/:id/expenses
+ * @access  Private
+ */
+export const createExpense = async (req, res) => {
+  try {
+    const { id: tripId } = req.params;
+    const userId = req.user.id;
+
+    const newExpense = await createExpenseService(tripId, userId, req.body);
+    return res.status(201).json({
+      message: 'Expense added successfully.',
+      expense: newExpense,
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ error: error.message || 'Failed to add expense.' });
+  }
+};
+
+/**
+ * @desc    Update a trip expense
+ * @route   PATCH /api/trips/:id/expenses/:expenseId
+ * @access  Private
+ */
+export const updateExpense = async (req, res) => {
+  try {
+    const { id: tripId, expenseId } = req.params;
+    const userId = req.user.id;
+
+    const updatedExpense = await updateExpenseService(tripId, expenseId, userId, req.body);
+    return res.status(200).json({
+      message: 'Expense updated successfully.',
+      expense: updatedExpense,
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ error: error.message || 'Failed to update expense.' });
+  }
+};
+
+/**
+ * @desc    Delete a trip expense
+ * @route   DELETE /api/trips/:id/expenses/:expenseId
+ * @access  Private
+ */
+export const deleteExpense = async (req, res) => {
+  try {
+    const { id: tripId, expenseId } = req.params;
+    const userId = req.user.id;
+
+    const result = await deleteExpenseService(tripId, expenseId, userId);
+    return res.status(200).json(result);
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ error: error.message || 'Failed to delete expense.' });
   }
 };

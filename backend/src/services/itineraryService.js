@@ -430,3 +430,97 @@ export const reorderActivitiesService = async (tripId, stopId, userId, activityI
     include: { activity: true },
   });
 };
+
+/**
+ * Create a new expense for trip
+ */
+export const createExpenseService = async (tripId, userId, data) => {
+  await verifyTripOwnership(tripId, userId);
+  const { title, category, amount, expenseDate, tripStopId } = data;
+
+  if (!title || !title.trim()) {
+    const error = new Error('Expense title is required.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (amount === undefined || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+    const error = new Error('Expense amount must be a positive number.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const validCategories = ['Transport', 'Stay', 'Activity', 'Meals', 'Miscellaneous'];
+  const catToUse = validCategories.includes(category) ? category : 'Miscellaneous';
+
+  const dateToUse = expenseDate ? new Date(expenseDate) : new Date();
+
+  const newExpense = await prisma.tripExpense.create({
+    data: {
+      tripId,
+      tripStopId: tripStopId || null,
+      title: title.trim(),
+      category: catToUse,
+      amount: parseFloat(amount),
+      expenseDate: isNaN(dateToUse.getTime()) ? new Date() : dateToUse,
+    },
+  });
+
+  return newExpense;
+};
+
+/**
+ * Update an existing trip expense
+ */
+export const updateExpenseService = async (tripId, expenseId, userId, data) => {
+  await verifyTripOwnership(tripId, userId);
+
+  const existingExpense = await prisma.tripExpense.findUnique({
+    where: { id: expenseId },
+  });
+
+  if (!existingExpense || existingExpense.tripId !== tripId) {
+    const error = new Error('Expense record not found.');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const { title, category, amount, expenseDate, tripStopId } = data;
+  let updateData = {};
+
+  if (title !== undefined) updateData.title = title.trim();
+  if (category !== undefined) updateData.category = category;
+  if (amount !== undefined && !isNaN(parseFloat(amount))) updateData.amount = parseFloat(amount);
+  if (expenseDate) updateData.expenseDate = new Date(expenseDate);
+  if (tripStopId !== undefined) updateData.tripStopId = tripStopId || null;
+
+  const updatedExpense = await prisma.tripExpense.update({
+    where: { id: expenseId },
+    data: updateData,
+  });
+
+  return updatedExpense;
+};
+
+/**
+ * Delete a trip expense
+ */
+export const deleteExpenseService = async (tripId, expenseId, userId) => {
+  await verifyTripOwnership(tripId, userId);
+
+  const existingExpense = await prisma.tripExpense.findUnique({
+    where: { id: expenseId },
+  });
+
+  if (!existingExpense || existingExpense.tripId !== tripId) {
+    const error = new Error('Expense record not found.');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  await prisma.tripExpense.delete({
+    where: { id: expenseId },
+  });
+
+  return { message: 'Expense deleted successfully.' };
+};

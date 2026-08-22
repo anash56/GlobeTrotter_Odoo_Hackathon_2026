@@ -10,6 +10,9 @@ import {
   updateActivity,
   deleteActivity,
   reorderActivities,
+  createExpense,
+  updateExpense,
+  deleteExpense,
 } from '../controllers/itineraryController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
@@ -45,5 +48,10 @@ router.post('/:id/stops/:stopId/activities', createActivity);
 router.patch('/:id/stops/:stopId/activities/reorder', reorderActivities);
 router.patch('/:id/stops/:stopId/activities/:activityId', updateActivity);
 router.delete('/:id/stops/:stopId/activities/:activityId', deleteActivity);
+
+// Trip Expenses Endpoints
+router.post('/:id/expenses', createExpense);
+router.patch('/:id/expenses/:expenseId', updateExpense);
+router.delete('/:id/expenses/:expenseId', deleteExpense);
 
 export default router;
