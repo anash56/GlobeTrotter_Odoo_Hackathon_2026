@@ -1,60 +1,48 @@
-const API_BASE_URL = 'http://localhost:5000/api/auth';
+import api from './api.js';
 
 export const authService = {
   /**
    * Login User
    */
   async login(credentials) {
-    const response = await fetch(`${API_BASE_URL}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    try {
+      const response = await api.post('/auth/login', {
         email: credentials.email,
         password: credentials.password,
-      }),
-    });
+      });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Login failed. Invalid credentials.');
+      const data = response.data;
+      if (data.token) {
+        localStorage.setItem('gt_token', data.token);
+        localStorage.setItem('gt_user', JSON.stringify(data.user));
+      }
+      return data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Login failed. Invalid credentials.');
     }
-
-    if (data.token) {
-      localStorage.setItem('gt_token', data.token);
-      localStorage.setItem('gt_user', JSON.stringify(data.user));
-    }
-
-    return data;
   },
 
   /**
    * Signup User
    */
   async signup(userData) {
-    const response = await fetch(`${API_BASE_URL}/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    try {
+      const response = await api.post('/auth/signup', {
         name: userData.name,
         email: userData.email,
         password: userData.password,
         confirmPassword: userData.confirmPassword,
-      }),
-    });
+      });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Signup failed. Please check your details.');
+      const data = response.data;
+      if (data.token) {
+        localStorage.setItem('gt_token', data.token);
+        localStorage.setItem('gt_user', JSON.stringify(data.user));
+      }
+      return data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Signup failed. Please check your details.');
     }
-
-    if (data.token) {
-      localStorage.setItem('gt_token', data.token);
-      localStorage.setItem('gt_user', JSON.stringify(data.user));
-    }
-
-    return data;
   },
 
   /**
@@ -72,24 +60,15 @@ export const authService = {
     if (!token) return null;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/me`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('gt_user', JSON.stringify(data.user));
-        return data.user;
+      const response = await api.get('/auth/me');
+      if (response.data?.user) {
+        localStorage.setItem('gt_user', JSON.stringify(response.data.user));
+        return response.data.user;
       }
     } catch (err) {
       console.warn('Failed to verify token session:', err.message);
     }
 
-    // Clear stale session on failure
     this.logout();
     return null;
   },
@@ -120,16 +99,10 @@ export const authService = {
    */
   async forgotPassword(email) {
     try {
-      const response = await fetch(`${API_BASE_URL}/forgot-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      if (response.ok) {
-        return await response.json();
-      }
+      const response = await api.post('/auth/forgot-password', { email });
+      return response.data;
     } catch (err) {
-      console.warn('Forgot password backend offline');
+      console.warn('Forgot password endpoint fallback');
     }
     return { success: true, message: `Password reset link sent to ${email}` };
   },
