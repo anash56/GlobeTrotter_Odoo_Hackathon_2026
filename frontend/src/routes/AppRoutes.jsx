@@ -8,6 +8,7 @@ import { AuthPage } from '../pages/AuthPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { CreateTripPage } from '../pages/CreateTripPage';
 import { TripDetailsPage } from '../pages/TripDetailsPage';
+import { BuildItineraryPage } from '../pages/BuildItineraryPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { useAuth } from '../context/AuthContext';
 
@@ -67,6 +68,7 @@ export function AppRoutes() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/trips/create" element={<CreateTripPage />} />
         <Route path="/trips/:id" element={<TripDetailsPage />} />
+        <Route path="/trips/:id/itinerary" element={<BuildItineraryPage />} />
       </Route>
 
       {/* 404 Catch-All Route */}
