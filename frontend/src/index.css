@@ -2158,7 +2158,6 @@ body {
 }
 
 /* ==========================================================================
-<<<<<<< HEAD
    LANDING PAGE ULTRA-MODERN STYLING SYSTEM
    ========================================================================== */
 .landing-page {
@@ -2186,7 +2185,9 @@ body {
   max-width: 1240px;
   margin: 0 auto;
   padding: 1rem 2rem;
-=======
+}
+
+/* ==========================================================================
    SCREEN 5: BUILD ITINERARY STYLES
    ========================================================================== */
 
@@ -2685,13 +2686,11 @@ body {
 }
 
 .activities-header {
->>>>>>> 4689fe38ebb371092c81545b282552a81fdf3908
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-<<<<<<< HEAD
 .landing-brand {
   display: flex;
   align-items: center;
@@ -3905,6 +3904,3 @@ body {
   gap: 1rem;
   margin-top: 1rem;
 }
-
-
->>>>>>> 4689fe38ebb371092c81545b282552a81fdf3908
