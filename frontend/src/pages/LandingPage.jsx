@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LandingNavbar } from '../components/landing/LandingNavbar';
 import { HeroBanner } from '../components/landing/HeroBanner';
 import { SearchControls } from '../components/landing/SearchControls';
 import { RegionalSection } from '../components/landing/RegionalSection';
 import { PreviousTripsSection } from '../components/landing/PreviousTripsSection';
-import { PlanTripModal } from '../components/landing/PlanTripModal';
 import { ToastContainer } from '../components/Toast';
 import { MapPin, Star, DollarSign, Sparkles, Plus } from 'lucide-react';
+import { tripService } from '../services/tripService';
 
 const STANDALONE_CITIES = [
   {
@@ -14,7 +15,7 @@ const STANDALONE_CITIES = [
     name: 'Tokyo',
     country: 'Japan',
     region: 'Asia',
-    description: 'Neon-lit skyscrapers, historic temples, and world-class culinary experiences.',
+    description: 'Neon-lit skyscrapers, historic temples, and culinary experiences.',
     imageUrl: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80',
     costIndex: 'Moderate',
     avgDailyCost: 150.0,
@@ -25,7 +26,7 @@ const STANDALONE_CITIES = [
     name: 'Paris',
     country: 'France',
     region: 'Europe',
-    description: 'The romantic capital of art, fashion, gastronomy, and iconic architecture.',
+    description: 'The romantic capital of art, fashion, and iconic architecture.',
     imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80',
     costIndex: 'Luxury',
     avgDailyCost: 220.0,
@@ -36,7 +37,7 @@ const STANDALONE_CITIES = [
     name: 'Dubai',
     country: 'United Arab Emirates',
     region: 'Middle East',
-    description: 'Futuristic skyline, desert safaris, luxury shopping, and golden beaches.',
+    description: 'Futuristic skyline, desert safaris, and golden beaches.',
     imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80',
     costIndex: 'Luxury',
     avgDailyCost: 250.0,
@@ -47,7 +48,7 @@ const STANDALONE_CITIES = [
     name: 'New York',
     country: 'United States',
     region: 'North America',
-    description: 'Bustling metropolis with Broadway, Central Park, and endless culture.',
+    description: 'Bustling metropolis with Broadway and Central Park.',
     imageUrl: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=800&q=80',
     costIndex: 'Luxury',
     avgDailyCost: 210.0,
@@ -58,7 +59,7 @@ const STANDALONE_CITIES = [
     name: 'Bali',
     country: 'Indonesia',
     region: 'South Asia',
-    description: 'Tropical paradise of volcanic mountains, iconic rice paddies, and coral reefs.',
+    description: 'Tropical paradise of volcanic mountains and iconic rice paddies.',
     imageUrl: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80',
     costIndex: 'Budget',
     avgDailyCost: 75.0,
@@ -69,7 +70,7 @@ const STANDALONE_CITIES = [
     name: 'Rome',
     country: 'Italy',
     region: 'Europe',
-    description: 'Ancient ruins, vibrant piazzas, rich history, and famous Italian dining.',
+    description: 'Ancient ruins, vibrant piazzas, and famous Italian dining.',
     imageUrl: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=800&q=80',
     costIndex: 'Moderate',
     avgDailyCost: 140.0,
@@ -77,46 +78,47 @@ const STANDALONE_CITIES = [
   },
 ];
 
-const INITIAL_PREVIEW_TRIPS = [
-  {
-    id: 'trip_1',
-    title: 'Autumn in Japan',
-    description: 'Exploring Tokyo, Kyoto temples, and Mount Fuji vistas.',
-    startDate: '2026-10-10',
-    endDate: '2026-10-20',
-    totalBudget: 2400,
-    coverPhotoUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80',
-    stops: [{ id: 's1' }, { id: 's2' }],
-  },
-  {
-    id: 'trip_2',
-    title: 'European Riviera Getaway',
-    description: 'Coastal drives through Southern France and Italian coastlines.',
-    startDate: '2026-06-15',
-    endDate: '2026-06-25',
-    totalBudget: 3200,
-    coverPhotoUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80',
-    stops: [{ id: 's3' }, { id: 's4' }, { id: 's5' }],
-  },
-];
-
 export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
+  const navigate = useNavigate();
+
+  // Search & Filter State
   const [searchQuery, setSearchQuery] = useState('');
   const [groupBy, setGroupBy] = useState('All');
   const [costFilter, setCostFilter] = useState('All');
   const [sortBy, setSortBy] = useState('default');
 
-  const [trips, setTrips] = useState(INITIAL_PREVIEW_TRIPS);
-  const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
-  const [isCreatingTrip, setIsCreatingTrip] = useState(false);
+  const [trips, setTrips] = useState([]);
+  const [loadingTrips, setLoadingTrips] = useState(false);
   const [toasts, setToasts] = useState([]);
 
-  const addToast = (message, type = 'info') => {
-    const id = Date.now() + Math.random();
-    setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+  // Fetch Database Trips if logged in
+  useEffect(() => {
+    const fetchUserTrips = async () => {
+      if (currentUser) {
+        setLoadingTrips(true);
+        try {
+          const data = await tripService.getTrips();
+          setTrips(data);
+        } catch (err) {
+          console.error('Failed to load user trips:', err);
+        } finally {
+          setLoadingTrips(false);
+        }
+      } else {
+        setTrips([]);
+      }
+    };
+
+    fetchUserTrips();
+  }, [currentUser]);
+
+  // Direct Navigation Handler to Existing Route /trips/create
+  const handlePlanTripClick = () => {
+    if (currentUser) {
+      navigate('/trips/create');
+    } else {
+      navigate('/login');
+    }
   };
 
   const getFilteredCities = () => {
@@ -157,25 +159,6 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
   const filteredCities = getFilteredCities();
   const hasActiveSearchOrFilter = searchQuery || groupBy !== 'All' || costFilter !== 'All' || sortBy !== 'default';
 
-  const handleCreateTrip = async (tripData) => {
-    setIsCreatingTrip(true);
-    setTimeout(() => {
-      const newTrip = {
-        id: 'trip_' + Date.now(),
-        title: tripData.title,
-        description: tripData.description || 'Custom personal itinerary',
-        startDate: tripData.startDate,
-        endDate: tripData.endDate,
-        totalBudget: tripData.totalBudget ? parseFloat(tripData.totalBudget) : 1500,
-        coverPhotoUrl: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80',
-        stops: [{ id: 's_new' }],
-      };
-      setTrips((prev) => [newTrip, ...prev]);
-      setIsCreatingTrip(false);
-      addToast(`Trip "${newTrip.title}" created successfully!`, 'success');
-    }, 400);
-  };
-
   const handleSelectRegion = (regionName) => {
     setGroupBy(regionName);
     const searchElem = document.getElementById('search-section');
@@ -197,16 +180,19 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
       <div className="ambient-orb orb-2" />
       <div className="ambient-orb orb-3" />
 
+      {/* 1. Top Navbar */}
       <LandingNavbar
         currentUser={currentUser}
-        onOpenAuth={onOpenAuth}
+        onOpenAuth={onOpenAuth || (() => navigate('/login'))}
         onLogout={onLogout}
-        onPlanTrip={() => setIsPlanModalOpen(true)}
+        onPlanTrip={handlePlanTripClick}
       />
 
       <main className="landing-main-content">
-        <HeroBanner onPlanTrip={() => setIsPlanModalOpen(true)} />
+        {/* 2. Hero Banner */}
+        <HeroBanner onPlanTrip={handlePlanTripClick} />
 
+        {/* 3. Search & Filter Bar */}
         <SearchControls
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -219,6 +205,7 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
           onResetFilters={handleResetFilters}
         />
 
+        {/* Filtered Search Results Grid if Active */}
         {hasActiveSearchOrFilter && (
           <section className="search-results-section">
             <div className="section-header">
@@ -255,7 +242,7 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
                         <button
                           type="button"
                           className="btn-add-to-trip"
-                          onClick={() => setIsPlanModalOpen(true)}
+                          onClick={handlePlanTripClick}
                         >
                           + Plan Here
                         </button>
@@ -277,38 +264,32 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
           </section>
         )}
 
+        {/* 4. Top Regional Selections */}
         <RegionalSection onSelectRegion={handleSelectRegion} />
 
+        {/* 5. Previous Trips */}
         <PreviousTripsSection
           trips={trips}
-          isLoading={false}
+          isLoading={loadingTrips}
           error={null}
           onRetry={() => {}}
-          onPlanTrip={() => setIsPlanModalOpen(true)}
-          isLoggedIn={true}
-          onOpenAuth={onOpenAuth}
+          onPlanTrip={handlePlanTripClick}
+          isLoggedIn={!!currentUser}
+          onOpenAuth={onOpenAuth || (() => navigate('/login'))}
         />
       </main>
 
+      {/* 6. Floating / Fixed "+ Plan a Trip" Button (Bottom Right) */}
       <div className="wireframe-plan-trip-floating">
         <button
           type="button"
           className="btn-floating-plan-cta"
-          onClick={() => setIsPlanModalOpen(true)}
+          onClick={handlePlanTripClick}
         >
           <Plus size={20} />
           <span>Plan a trip</span>
         </button>
       </div>
-
-      <PlanTripModal
-        isOpen={isPlanModalOpen}
-        onClose={() => setIsPlanModalOpen(false)}
-        onSubmit={handleCreateTrip}
-        isLoading={isCreatingTrip}
-        isLoggedIn={true}
-        onOpenAuth={onOpenAuth}
-      />
 
       <ToastContainer toasts={toasts} onDismiss={(id) => setToasts((t) => t.filter((item) => item.id !== id))} />
     </div>

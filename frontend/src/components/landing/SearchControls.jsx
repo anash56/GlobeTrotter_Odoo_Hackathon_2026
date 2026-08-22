@@ -16,10 +16,10 @@ export function SearchControls({
 
   return (
     <div className="search-controls-container" id="search-section">
-      <div className="search-controls-card">
+      <div className="search-controls-toolbar">
         {/* Prominent Search Field (Wireframe: Search bar ......) */}
         <div className="search-input-wrapper">
-          <Search className="search-icon" size={20} />
+          <Search className="search-icon" size={18} />
           <input
             type="text"
             className="search-input"
@@ -34,24 +34,20 @@ export function SearchControls({
               onClick={() => onSearchChange('')}
               title="Clear search"
             >
-              <X size={16} />
+              <X size={14} />
             </button>
           )}
         </div>
 
-        {/* Filter & Sort Controls Grid (Wireframe: Group by | Filter | Sort by...) */}
-        <div className="controls-grid">
-          {/* Group By Select */}
-          <div className="control-group">
-            <label className="control-label">
-              <Layers size={14} /> Group by
-            </label>
+        {/* Inline Filter Buttons (Wireframe: Group by | Filter | Sort by...) */}
+        <div className="toolbar-buttons-row">
+          <div className="control-select-wrapper">
             <select
-              className="control-select"
+              className="toolbar-select"
               value={groupBy}
               onChange={(e) => onGroupByChange(e.target.value)}
             >
-              <option value="All">All Regions</option>
+              <option value="All">Group by</option>
               <option value="Asia">Asia</option>
               <option value="Europe">Europe</option>
               <option value="Middle East">Middle East</option>
@@ -60,34 +56,26 @@ export function SearchControls({
             </select>
           </div>
 
-          {/* Filter By Cost */}
-          <div className="control-group">
-            <label className="control-label">
-              <Filter size={14} /> Filter
-            </label>
+          <div className="control-select-wrapper">
             <select
-              className="control-select"
+              className="toolbar-select"
               value={costFilter}
               onChange={(e) => onCostFilterChange(e.target.value)}
             >
-              <option value="All">All Budgets</option>
+              <option value="All">Filter</option>
               <option value="Budget">Budget ($)</option>
               <option value="Moderate">Moderate ($$)</option>
               <option value="Luxury">Luxury ($$$)</option>
             </select>
           </div>
 
-          {/* Sort By Select */}
-          <div className="control-group">
-            <label className="control-label">
-              <ArrowUpDown size={14} /> Sort by...
-            </label>
+          <div className="control-select-wrapper">
             <select
-              className="control-select"
+              className="toolbar-select"
               value={sortBy}
               onChange={(e) => onSortByChange(e.target.value)}
             >
-              <option value="default">Default</option>
+              <option value="default">Sort by...</option>
               <option value="popularity">Most Popular</option>
               <option value="cost-asc">Lowest Cost</option>
               <option value="cost-desc">Highest Cost</option>
@@ -95,14 +83,14 @@ export function SearchControls({
             </select>
           </div>
 
-          {/* Reset Filters CTA */}
           {hasActiveFilters && (
             <button
               type="button"
-              className="btn-reset-filters"
+              className="btn-reset-toolbar"
               onClick={onResetFilters}
+              title="Reset Filters"
             >
-              <X size={14} /> Reset Filters
+              <X size={14} />
             </button>
           )}
         </div>
