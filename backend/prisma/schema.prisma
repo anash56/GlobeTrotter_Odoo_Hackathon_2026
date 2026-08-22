@@ -1,11 +1,136 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String
+  name         String
+  avatarUrl    String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  trips        Trip[]
+  wishlists    Wishlist[]
+
+  @@map("users")
+}
+
+model City {
+  id              String       @id @default(uuid())
+  name            String
+  country         String
+  region          String
+  description     String
+  imageUrl        String
+  costIndex       String       @default("Moderate") // "Budget" | "Moderate" | "Luxury"
+  avgDailyCost    Float        @default(100.0)
+  popularityScore Float        @default(4.5)
+  createdAt       DateTime     @default(now())
+  activities      Activity[]
+  tripStops       TripStop[]
+  wishlists       Wishlist[]
+
+  @@map("cities")
+}
+
+model Activity {
+  id             String         @id @default(uuid())
+  cityId         String
+  city           City           @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  name           String
+  category       String         // "Sightseeing" | "Food" | "Adventure" | "Culture" | "Relaxation"
+  description    String
+  estimatedCost  Float          @default(0.0)
+  durationHours  Float          @default(2.0)
+  imageUrl       String?
+  createdAt      DateTime       @default(now())
+  tripActivities TripActivity[]
+
+  @@map("activities")
+}
+
+model Trip {
+  id            String        @id @default(uuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  description   String?
+  startDate     DateTime
+  endDate       DateTime
+  totalBudget   Float         @default(0.0)
+  coverPhotoUrl String?
+  isPublic      Boolean       @default(false)
+  shareToken    String        @unique @default(uuid())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  stops         TripStop[]
+  expenses      TripExpense[]
+
+  @@map("trips")
+}
+
+model TripStop {
+  id            String         @id @default(uuid())
+  tripId        String
+  trip          Trip           @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  cityId        String
+  city          City           @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  sequenceOrder Int            @default(1)
+  startDate     DateTime
+  endDate       DateTime
+  notes         String?
+  activities    TripActivity[]
+  expenses      TripExpense[]
+
+  @@map("trip_stops")
+}
+
+model TripActivity {
+  id            String    @id @default(uuid())
+  tripStopId    String
+  tripStop      TripStop  @relation(fields: [tripStopId], references: [id], onDelete: Cascade)
+  activityId    String?
+  activity      Activity? @relation(fields: [activityId], references: [id], onDelete: SetNull)
+  customName    String?
+  category      String    @default("Sightseeing")
+  scheduledDate DateTime
+  startTime     String?
+  endTime       String?
+  cost          Float     @default(0.0)
+  sequenceOrder Int       @default(1)
+
+  @@map("trip_activities")
+}
+
+model TripExpense {
+  id          String    @id @default(uuid())
+  tripId      String
+  trip        Trip      @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  tripStopId  String?
+  tripStop    TripStop? @relation(fields: [tripStopId], references: [id], onDelete: SetNull)
+  category    String    // "Transport" | "Stay" | "Activity" | "Meals" | "Miscellaneous"
+  title       String
+  amount      Float
+  expenseDate DateTime  @default(now())
+
+  @@map("trip_expenses")
+}
+
+model Wishlist {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cityId    String
+  city      City     @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, cityId])
+  @@map("wishlists")
 }
