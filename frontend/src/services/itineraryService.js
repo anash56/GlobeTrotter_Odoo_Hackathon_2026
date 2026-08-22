@@ -108,4 +108,40 @@ export const itineraryService = {
       throw new Error(error.response?.data?.error || 'Failed to reorder activities.');
     }
   },
+
+  /**
+   * Add expense to trip
+   */
+  async createExpense(tripId, expenseData) {
+    try {
+      const response = await api.post(`/trips/${tripId}/expenses`, expenseData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Failed to add expense.');
+    }
+  },
+
+  /**
+   * Update expense
+   */
+  async updateExpense(tripId, expenseId, expenseData) {
+    try {
+      const response = await api.patch(`/trips/${tripId}/expenses/${expenseId}`, expenseData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Failed to update expense.');
+    }
+  },
+
+  /**
+   * Delete expense
+   */
+  async deleteExpense(tripId, expenseId) {
+    try {
+      const response = await api.delete(`/trips/${tripId}/expenses/${expenseId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Failed to delete expense.');
+    }
+  },
 };

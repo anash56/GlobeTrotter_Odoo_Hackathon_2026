@@ -167,6 +167,105 @@ async function main() {
     }
   }
 
+  // Seed sample users & community posts if needed
+  console.log('Seeding community posts and users...');
+  let demoUser = await prisma.user.findFirst({ where: { email: 'traveler@globetrotter.com' } });
+  if (!demoUser) {
+    demoUser = await prisma.user.create({
+      data: {
+        email: 'traveler@globetrotter.com',
+        passwordHash: '$2b$10$EPVb/S.FmD9.N3zL5m7O2e.1/9GvX3J3b8k2K3L4M5N6O7P8Q9R0',
+        name: 'Elena Rostova',
+        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+        role: 'USER'
+      }
+    });
+  }
+
+  let demoUser2 = await prisma.user.findFirst({ where: { email: 'alex@globetrotter.com' } });
+  if (!demoUser2) {
+    demoUser2 = await prisma.user.create({
+      data: {
+        email: 'alex@globetrotter.com',
+        passwordHash: '$2b$10$EPVb/S.FmD9.N3zL5m7O2e.1/9GvX3J3b8k2K3L4M5N6O7P8Q9R0',
+        name: 'Alex Chen',
+        avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+        role: 'USER'
+      }
+    });
+  }
+
+  let demoUser3 = await prisma.user.findFirst({ where: { email: 'sophia@globetrotter.com' } });
+  if (!demoUser3) {
+    demoUser3 = await prisma.user.create({
+      data: {
+        email: 'sophia@globetrotter.com',
+        passwordHash: '$2b$10$EPVb/S.FmD9.N3zL5m7O2e.1/9GvX3J3b8k2K3L4M5N6O7P8Q9R0',
+        name: 'Sophia Martinez',
+        avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
+        role: 'USER'
+      }
+    });
+  }
+
+  const existingPosts = await prisma.communityPost.count();
+  if (existingPosts === 0) {
+    const post1 = await prisma.communityPost.create({
+      data: {
+        userId: demoUser.id,
+        title: 'Unforgettable Sunset at Tokyo’s Sensō-ji Temple',
+        destination: 'Tokyo, Japan',
+        category: 'Trip Story',
+        content: 'Exploring Asakusa in the early evening is magical. The incense smoke around the main hall, combined with illuminated lanterns and traditional stalls, creates an atmosphere you cannot find anywhere else in Tokyo. Highly recommend visiting around 5:30 PM!',
+        imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80',
+        likes: {
+          create: [{ userId: demoUser2.id }, { userId: demoUser3.id }]
+        },
+        comments: {
+          create: [
+            { userId: demoUser2.id, content: 'Completely agree! The night lighting is stunning.' },
+            { userId: demoUser3.id, content: 'Did you manage to try the melonpan bakery right outside the gate?' }
+          ]
+        }
+      }
+    });
+
+    const post2 = await prisma.communityPost.create({
+      data: {
+        userId: demoUser2.id,
+        title: 'Top 5 Hidden Gem Café Spots in Paris for Remote Travelers',
+        destination: 'Paris, France',
+        category: 'Travel Tip',
+        content: 'If you need a quiet corner with strong espresso and reliable Wi-Fi in Paris: 1. KB Café Shop in Pigalle, 2. Ten Belles near Canal Saint-Martin, 3. The Broken Arm in Le Marais. Avoid overcrowded tourist spots near Notre-Dame!',
+        imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80',
+        likes: {
+          create: [{ userId: demoUser.id }]
+        },
+        comments: {
+          create: [
+            { userId: demoUser.id, content: 'Ten Belles has the best sourdough sandwiches too!' }
+          ]
+        }
+      }
+    });
+
+    const post3 = await prisma.communityPost.create({
+      data: {
+        userId: demoUser3.id,
+        title: 'Chasing Waterfalls & Sunset Dancing in Uluwatu, Bali',
+        destination: 'Bali, Indonesia',
+        category: 'Destination Review',
+        content: 'Watching the Kecak Fire Dance on the cliff edge of Uluwatu during sunset was an emotional experience. Tip: Buy your tickets online 2 hours before, and watch out for the cheeky monkeys near the temple entrance!',
+        imageUrl: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80',
+        likes: {
+          create: [{ userId: demoUser.id }, { userId: demoUser2.id }]
+        }
+      }
+    });
+
+    console.log('Sample community posts successfully created!');
+  }
+
   console.log('Seeding completed successfully!');
 }
 

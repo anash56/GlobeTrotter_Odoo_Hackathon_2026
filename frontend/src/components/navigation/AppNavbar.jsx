@@ -43,9 +43,12 @@ export function AppNavbar() {
             <Link to="/" className={`nav-link ${isHomeActive ? 'active' : ''}`}>
               Home
             </Link>
-            <a href="/#destinations" className="nav-link">
-              Explore / Destinations
-            </a>
+            <Link to="/explore" className={`nav-link ${location.pathname === '/explore' ? 'active' : ''}`}>
+              Explore
+            </Link>
+            <Link to="/community" className={`nav-link ${location.pathname === '/community' ? 'active' : ''}`}>
+              Community
+            </Link>
             <Link to="/my-trips" className={`nav-link ${isMyTripsActive ? 'active' : ''}`}>
               My Trips
             </Link>
@@ -116,6 +119,8 @@ export function AppNavbar() {
         <div className="mobile-nav-drawer" role="navigation" aria-label="Mobile Navigation">
           <Link to="/" onClick={() => setMobileMenuOpen(false)}>Home</Link>
           <a href="/#destinations" onClick={() => setMobileMenuOpen(false)}>Explore / Destinations</a>
+          <Link to="/explore" onClick={() => setMobileMenuOpen(false)}>Explore</Link>
+          <Link to="/community" onClick={() => setMobileMenuOpen(false)}>Community</Link>
           <Link to="/my-trips" className={isMyTripsActive ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>My Trips</Link>
           <Link to="/calendar" className={isCalendarActive ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>Calendar</Link>
           <Link to="/profile" className={isProfileActive ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>Profile</Link>

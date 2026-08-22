@@ -1,14 +1,14 @@
 import { fetchCities, fetchCityById } from '../services/cityService.js';
 
 /**
- * @desc    Get all cities or search cities
+ * @desc    Get all cities or search/filter cities
  * @route   GET /api/cities
  * @access  Public
  */
 export const getCities = async (req, res) => {
   try {
-    const { q, popular } = req.query;
-    const cities = await fetchCities(q, popular);
+    const { q, popular, region, costIndex, sortBy } = req.query;
+    const cities = await fetchCities(q, popular, region, costIndex, sortBy);
     return res.status(200).json(cities);
   } catch (error) {
     console.error('Get cities error:', error);

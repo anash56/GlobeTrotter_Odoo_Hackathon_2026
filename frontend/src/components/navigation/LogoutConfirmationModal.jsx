@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { LogOut, X, AlertTriangle } from 'lucide-react';
+import { LogOut, X } from 'lucide-react';
 
 export function LogoutConfirmationModal({ isOpen, onClose, onConfirm }) {
   useEffect(() => {

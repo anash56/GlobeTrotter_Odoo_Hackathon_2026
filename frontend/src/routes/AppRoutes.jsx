@@ -1,10 +1,13 @@
 import React from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { PublicRoute } from './PublicRoute';
 import { ProtectedRoute } from './ProtectedRoute';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { LandingPage } from '../pages/LandingPage';
 import { AuthPage } from '../pages/AuthPage';
+import { ExplorePage } from '../pages/ExplorePage';
+import { CityDetailsPage } from '../pages/CityDetailsPage';
+import { CommunityPage } from '../pages/CommunityPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { ProfilePage } from '../pages/ProfilePage';
 import { MyTripsPage } from '../pages/MyTripsPage';
@@ -33,6 +36,15 @@ export function AppRoutes() {
     <Routes>
       {/* Public Landing Page */}
       <Route path="/" element={<LandingRouteWrapper />} />
+      <Route path="/landing" element={<LandingRouteWrapper />} />
+
+      {/* Screen 8: Explore & Activity/City Search Pages */}
+      <Route path="/explore" element={<ExplorePage />} />
+      <Route path="/destinations" element={<ExplorePage />} />
+      <Route path="/destinations/:cityId" element={<CityDetailsPage />} />
+
+      {/* Screen 10: Community Feed */}
+      <Route path="/community" element={<CommunityPage />} />
 
       {/* Public Auth Routes */}
       <Route
