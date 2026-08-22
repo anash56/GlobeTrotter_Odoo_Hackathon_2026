@@ -1,0 +1,1 @@
+# GlobeTrotter_Odoo_Hackathon_2026
