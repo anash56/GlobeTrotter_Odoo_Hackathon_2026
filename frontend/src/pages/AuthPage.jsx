@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { TravelShowcase } from '../components/TravelShowcase';
 import { LoginForm } from '../components/LoginForm';
 import { SignupForm } from '../components/SignupForm';
@@ -6,14 +7,29 @@ import { ForgotPasswordModal } from '../components/ForgotPasswordModal';
 import { ResetPasswordModal } from '../components/ResetPasswordModal';
 import { ToastContainer } from '../components/Toast';
 import { authService } from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 
 export function AuthPage({ onLoginSuccess }) {
-  const [activeTab, setActiveTab] = useState('login'); // 'login' | 'signup'
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { loginUser } = useAuth();
+
+  // Sync active tab with current URL route
+  const isSignupPath = location.pathname === '/signup';
+  const [activeTab, setActiveTab] = useState(isSignupPath ? 'signup' : 'login');
   const [isForgotOpen, setIsForgotOpen] = useState(false);
   const [resetToken, setResetToken] = useState(null);
   const [isResetOpen, setIsResetOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [toasts, setToasts] = useState([]);
+
+  useEffect(() => {
+    if (location.pathname === '/signup') {
+      setActiveTab('signup');
+    } else if (location.pathname === '/login') {
+      setActiveTab('login');
+    }
+  }, [location.pathname]);
 
   // Detect resetToken in URL query params
   useEffect(() => {
@@ -39,12 +55,16 @@ export function AuthPage({ onLoginSuccess }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
-  // Handle Login Submit
+  // Handle Login Submit -> authenticate & redirect to dashboard
   const handleLogin = async (credentials) => {
     setIsLoading(true);
     try {
       const response = await authService.login(credentials);
       addToast(response.message || `Welcome back, ${response.user.name}!`, 'success');
+      
+      // Update global auth state (triggers automatic redirect to /dashboard via PublicRoute/ProtectedRoute)
+      loginUser(response.user);
+
       if (onLoginSuccess) {
         onLoginSuccess(response.user);
       }
@@ -55,15 +75,19 @@ export function AuthPage({ onLoginSuccess }) {
     }
   };
 
-  // Handle Signup Submit
+  // Handle Signup Submit -> switch to login tab with success notice
   const handleSignup = async (userData) => {
     setIsLoading(true);
     try {
       const response = await authService.signup(userData);
-      addToast(response.message || 'Account created successfully! Welcome to GlobeTrotter.', 'success');
-      if (onLoginSuccess && response.user) {
-        onLoginSuccess(response.user);
-      }
+      addToast('Account created successfully! Please sign in with your email and password.', 'success');
+      
+      // Clear token so user logs in cleanly
+      authService.logout();
+
+      // Automatically navigate to login form
+      setActiveTab('login');
+      navigate('/login');
     } catch (err) {
       addToast(err.message || 'Registration failed. Please try again.', 'error');
     } finally {
@@ -134,14 +158,20 @@ export function AuthPage({ onLoginSuccess }) {
             <button
               type="button"
               className={`tab-btn ${activeTab === 'login' ? 'active' : ''}`}
-              onClick={() => setActiveTab('login')}
+              onClick={() => {
+                setActiveTab('login');
+                navigate('/login');
+              }}
             >
               Sign In
             </button>
             <button
               type="button"
               className={`tab-btn ${activeTab === 'signup' ? 'active' : ''}`}
-              onClick={() => setActiveTab('signup')}
+              onClick={() => {
+                setActiveTab('signup');
+                navigate('/signup');
+              }}
             >
               Create Account
             </button>
@@ -152,13 +182,19 @@ export function AuthPage({ onLoginSuccess }) {
             <LoginForm
               onSubmit={handleLogin}
               onForgotPassword={() => setIsForgotOpen(true)}
-              onSwitchToSignup={() => setActiveTab('signup')}
+              onSwitchToSignup={() => {
+                setActiveTab('signup');
+                navigate('/signup');
+              }}
               isLoading={isLoading}
             />
           ) : (
             <SignupForm
               onSubmit={handleSignup}
-              onSwitchToLogin={() => setActiveTab('login')}
+              onSwitchToLogin={() => {
+                setActiveTab('login');
+                navigate('/login');
+              }}
               isLoading={isLoading}
             />
           )}
