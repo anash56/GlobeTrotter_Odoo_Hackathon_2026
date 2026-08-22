@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TravelShowcase } from '../components/TravelShowcase';
 import { LoginForm } from '../components/LoginForm';
 import { SignupForm } from '../components/SignupForm';
 import { ForgotPasswordModal } from '../components/ForgotPasswordModal';
+import { ResetPasswordModal } from '../components/ResetPasswordModal';
 import { ToastContainer } from '../components/Toast';
 import { authService } from '../services/authService';
 
 export function AuthPage({ onLoginSuccess }) {
   const [activeTab, setActiveTab] = useState('login'); // 'login' | 'signup'
   const [isForgotOpen, setIsForgotOpen] = useState(false);
+  const [resetToken, setResetToken] = useState(null);
+  const [isResetOpen, setIsResetOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [toasts, setToasts] = useState([]);
+
+  // Detect resetToken in URL query params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('resetToken') || params.get('token');
+    if (token) {
+      setResetToken(token);
+      setIsResetOpen(true);
+    }
+  }, []);
 
   const addToast = (message, type = 'info') => {
     const id = Date.now() + Math.random();
@@ -47,8 +60,10 @@ export function AuthPage({ onLoginSuccess }) {
     setIsLoading(true);
     try {
       const response = await authService.signup(userData);
-      addToast(response.message || 'Account created successfully! Please sign in.', 'success');
-      setActiveTab('login');
+      addToast(response.message || 'Account created successfully! Welcome to GlobeTrotter.', 'success');
+      if (onLoginSuccess && response.user) {
+        onLoginSuccess(response.user);
+      }
     } catch (err) {
       addToast(err.message || 'Registration failed. Please try again.', 'error');
     } finally {
@@ -64,7 +79,24 @@ export function AuthPage({ onLoginSuccess }) {
       addToast(response.message || `Reset link dispatched to ${email}`, 'info');
       return true;
     } catch (err) {
-      addToast('Failed to send reset link. Please try again.', 'error');
+      addToast(err.message || 'Failed to send reset link. Please try again.', 'error');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle Reset Password Submit
+  const handleResetPassword = async ({ token, password, confirmPassword }) => {
+    setIsLoading(true);
+    try {
+      const response = await authService.resetPassword({ token, password, confirmPassword });
+      addToast(response.message || 'Password updated successfully! Please sign in.', 'success');
+      // Clean query parameter from browser address bar
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return true;
+    } catch (err) {
+      addToast(err.message || 'Failed to update password. Link may be invalid or expired.', 'error');
       return false;
     } finally {
       setIsLoading(false);
@@ -141,8 +173,22 @@ export function AuthPage({ onLoginSuccess }) {
         isLoading={isLoading}
       />
 
+      {/* Reset Password Modal (Triggered via Brevo Email Link) */}
+      <ResetPasswordModal
+        isOpen={isResetOpen}
+        token={resetToken}
+        onClose={() => {
+          setIsResetOpen(false);
+          setResetToken(null);
+          setActiveTab('login');
+        }}
+        onSubmit={handleResetPassword}
+        isLoading={isLoading}
+      />
+
       {/* Toast Notification Container */}
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
     </div>
   );
 }
+

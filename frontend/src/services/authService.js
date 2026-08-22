@@ -119,18 +119,39 @@ export const authService = {
    * Request Password Reset
    */
   async forgotPassword(email) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/forgot-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      if (response.ok) {
-        return await response.json();
-      }
-    } catch (err) {
-      console.warn('Forgot password backend offline');
+    const response = await fetch(`${API_BASE_URL}/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to request password reset. Please try again.');
     }
-    return { success: true, message: `Password reset link sent to ${email}` };
+
+    return data;
+  },
+
+  /**
+   * Reset Password with Token
+   */
+  async resetPassword({ token, password, confirmPassword }) {
+    const response = await fetch(`${API_BASE_URL}/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, password, confirmPassword }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to reset password. Please try again.');
+    }
+
+    return data;
   },
 };
+
+
