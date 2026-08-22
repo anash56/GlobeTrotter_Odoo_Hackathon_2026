@@ -113,6 +113,15 @@ export function TripDetailsPage({ tripId: propTripId, onBack, currentUser: propU
             <span className="meta-item"><Calendar size={16} /> {formatDate(trip.startDate)} - {formatDate(trip.endDate)}</span>
             <span className="meta-item badge-duration"><Clock size={16} /> {calculateDays()} Days</span>
           </div>
+          <div style={{ marginTop: '1.2rem' }}>
+            <button
+              className="btn-primary"
+              style={{ width: 'auto', display: 'inline-flex', padding: '0.75rem 1.6rem', fontSize: '0.95rem' }}
+              onClick={() => navigate(`/trips/${trip.id}/itinerary`)}
+            >
+              <Sparkles size={16} /> Build & Manage Itinerary
+            </button>
+          </div>
         </div>
       </div>
 
