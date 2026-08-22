@@ -35,7 +35,7 @@ export function LandingNavbar({ currentUser, onOpenAuth, onLogout, onPlanTrip })
                 {currentUser.avatarUrl ? (
                   <img src={currentUser.avatarUrl} alt={currentUser.name} />
                 ) : (
-                  <span>{currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}</span>
+                  <span>{currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'T'}</span>
                 )}
               </div>
               <span className="user-name-text">{currentUser.name}</span>

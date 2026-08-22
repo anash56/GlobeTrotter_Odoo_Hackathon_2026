@@ -8,7 +8,6 @@ import { PlanTripModal } from '../components/landing/PlanTripModal';
 import { ToastContainer } from '../components/Toast';
 import { MapPin, Star, DollarSign, Sparkles, Plus } from 'lucide-react';
 
-// Static seed destinations for standalone frontend presentation
 const STANDALONE_CITIES = [
   {
     id: 'city_tokyo',
@@ -78,7 +77,6 @@ const STANDALONE_CITIES = [
   },
 ];
 
-// Initial mock user trips for rich frontend preview
 const INITIAL_PREVIEW_TRIPS = [
   {
     id: 'trip_1',
@@ -103,16 +101,12 @@ const INITIAL_PREVIEW_TRIPS = [
 ];
 
 export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
-  // Search, Group By, Filter, and Sort state
   const [searchQuery, setSearchQuery] = useState('');
   const [groupBy, setGroupBy] = useState('All');
   const [costFilter, setCostFilter] = useState('All');
   const [sortBy, setSortBy] = useState('default');
 
-  // User Trips client state
   const [trips, setTrips] = useState(INITIAL_PREVIEW_TRIPS);
-
-  // Modal & Toast state
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
   const [isCreatingTrip, setIsCreatingTrip] = useState(false);
   const [toasts, setToasts] = useState([]);
@@ -125,7 +119,6 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
     }, 4000);
   };
 
-  // Pure frontend search, filter, and sort calculations
   const getFilteredCities = () => {
     let result = [...STANDALONE_CITIES];
 
@@ -164,7 +157,6 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
   const filteredCities = getFilteredCities();
   const hasActiveSearchOrFilter = searchQuery || groupBy !== 'All' || costFilter !== 'All' || sortBy !== 'default';
 
-  // Handle client-side trip creation
   const handleCreateTrip = async (tripData) => {
     setIsCreatingTrip(true);
     setTimeout(() => {
@@ -201,12 +193,10 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
 
   return (
     <div className="landing-page">
-      {/* Ambient Orbs matching Login/Signup design */}
       <div className="ambient-orb orb-1" />
       <div className="ambient-orb orb-2" />
       <div className="ambient-orb orb-3" />
 
-      {/* Top Header/Navbar matching Wireframe (GlobeTrotter Logo left, User icon right) */}
       <LandingNavbar
         currentUser={currentUser}
         onOpenAuth={onOpenAuth}
@@ -215,10 +205,8 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
       />
 
       <main className="landing-main-content">
-        {/* Banner Image Hero Section (Wireframe Banner Image Box) */}
         <HeroBanner onPlanTrip={() => setIsPlanModalOpen(true)} />
 
-        {/* Search bar, Group by, Filter, Sort by Controls (Screen 3 Wireframe) */}
         <SearchControls
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -231,7 +219,6 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
           onResetFilters={handleResetFilters}
         />
 
-        {/* Search & Filter Results Grid */}
         {hasActiveSearchOrFilter && (
           <section className="search-results-section">
             <div className="section-header">
@@ -290,10 +277,8 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
           </section>
         )}
 
-        {/* Top Regional Selections (Screen 3 Wireframe Row) */}
         <RegionalSection onSelectRegion={handleSelectRegion} />
 
-        {/* Previous Trips Section (Screen 3 Wireframe Row) */}
         <PreviousTripsSection
           trips={trips}
           isLoading={false}
@@ -305,7 +290,6 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
         />
       </main>
 
-      {/* Screen 3 Wireframe Bottom-Right Floating "+ Plan a trip" CTA */}
       <div className="wireframe-plan-trip-floating">
         <button
           type="button"
@@ -317,7 +301,6 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
         </button>
       </div>
 
-      {/* Plan a Trip Interactive Modal */}
       <PlanTripModal
         isOpen={isPlanModalOpen}
         onClose={() => setIsPlanModalOpen(false)}
@@ -327,7 +310,6 @@ export function LandingPage({ currentUser, onOpenAuth, onLogout }) {
         onOpenAuth={onOpenAuth}
       />
 
-      {/* Toast Notifications */}
       <ToastContainer toasts={toasts} onDismiss={(id) => setToasts((t) => t.filter((item) => item.id !== id))} />
     </div>
   );
