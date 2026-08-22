@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Compass, User, LogOut, PlusCircle, Menu, X } from 'lucide-react';
 
 export function LandingNavbar({ currentUser, onOpenAuth, onLogout, onPlanTrip }) {
@@ -8,18 +9,18 @@ export function LandingNavbar({ currentUser, onOpenAuth, onLogout, onPlanTrip })
     <header className="landing-navbar">
       <div className="landing-nav-container">
         {/* Brand Logo */}
-        <div className="landing-brand">
+        <Link to="/" className="landing-brand" style={{ textDecoration: 'none' }}>
           <div className="brand-logo-icon">
             <Compass size={24} />
           </div>
           <span className="brand-logo-text">GlobeTrotter</span>
-        </div>
+        </Link>
 
         {/* Desktop Navigation Links */}
         <nav className="landing-nav-links">
           <a href="#hero" className="nav-link active">Home</a>
           <a href="#destinations" className="nav-link">Explore / Destinations</a>
-          <a href="#previous-trips" className="nav-link">My Trips</a>
+          <Link to="/my-trips" className="nav-link">My Trips</Link>
         </nav>
 
         {/* Desktop Nav Actions */}
