@@ -7,6 +7,7 @@ import { LandingPage } from '../pages/LandingPage';
 import { AuthPage } from '../pages/AuthPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { ProfilePage } from '../pages/ProfilePage';
+import { MyTripsPage } from '../pages/MyTripsPage';
 import { CreateTripPage } from '../pages/CreateTripPage';
 import { TripDetailsPage } from '../pages/TripDetailsPage';
 import { BuildItineraryPage } from '../pages/BuildItineraryPage';
@@ -67,8 +68,11 @@ export function AppRoutes() {
         }
       >
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/my-trips" element={<MyTripsPage />} />
+        <Route path="/trips" element={<MyTripsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/trips/create" element={<CreateTripPage />} />
+        <Route path="/create-trip" element={<CreateTripPage />} />
         <Route path="/trips/:id" element={<TripDetailsPage />} />
         <Route path="/trips/:id/itinerary" element={<BuildItineraryPage />} />
       </Route>

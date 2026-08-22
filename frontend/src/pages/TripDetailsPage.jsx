@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  ArrowLeft, Calendar, MapPin, DollarSign, Star, Compass,
-  Sparkles, Plus, Clock, Info, CheckCircle2, User
+import { 
+  ArrowLeft, Calendar, MapPin, DollarSign, Star, Compass, 
+  Sparkles, Plus, Clock, Info, CheckCircle2, User 
 } from 'lucide-react';
 import { tripService } from '../services/tripService';
 import { useAuth } from '../context/AuthContext';
