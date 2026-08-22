@@ -46,11 +46,9 @@ export function AuthPage({ onLoginSuccess }) {
   const handleSignup = async (userData) => {
     setIsLoading(true);
     try {
-      const response = await authService.register(userData);
-      addToast(response.message || 'Account created successfully!', 'success');
-      if (onLoginSuccess) {
-        onLoginSuccess(response.user);
-      }
+      const response = await authService.signup(userData);
+      addToast(response.message || 'Account created successfully! Please sign in.', 'success');
+      setActiveTab('login');
     } catch (err) {
       addToast(err.message || 'Registration failed. Please try again.', 'error');
     } finally {
