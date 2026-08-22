@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
-import { Compass, Plus, LogOut } from 'lucide-react';
+import { Compass, Plus, LogOut, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export function DashboardLayout() {
@@ -28,12 +28,14 @@ export function DashboardLayout() {
 
           {currentUser && (
             <div className="user-dropdown">
-              <img
-                src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80'}
-                alt={currentUser.name}
-                className="nav-avatar"
-              />
-              <span className="user-name">{currentUser.name}</span>
+              <Link to="/profile" className="profile-nav-link" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <img
+                  src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80'}
+                  alt={currentUser.name}
+                  className="nav-avatar"
+                />
+                <span className="user-name">{currentUser.name}</span>
+              </Link>
               <button type="button" className="btn-logout-icon" onClick={handleLogout} title="Sign Out">
                 <LogOut size={18} />
               </button>
