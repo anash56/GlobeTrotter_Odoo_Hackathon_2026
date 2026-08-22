@@ -102,8 +102,19 @@ export const authService = {
       const response = await api.post('/auth/forgot-password', { email });
       return response.data;
     } catch (err) {
-      console.warn('Forgot password endpoint fallback');
+      throw new Error(err.response?.data?.error || 'Failed to request password reset. Please try again.');
     }
-    return { success: true, message: `Password reset link sent to ${email}` };
+  },
+
+  /**
+   * Reset Password with Token
+   */
+  async resetPassword({ token, password, confirmPassword }) {
+    try {
+      const response = await api.post('/auth/reset-password', { token, password, confirmPassword });
+      return response.data;
+    } catch (err) {
+      throw new Error(err.response?.data?.error || 'Failed to reset password. Please try again.');
+    }
   },
 };
