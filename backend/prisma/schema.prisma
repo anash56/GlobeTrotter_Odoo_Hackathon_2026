@@ -16,8 +16,11 @@ model User {
   role         String     @default("USER")
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
-  trips        Trip[]
-  wishlists    Wishlist[]
+  trips            Trip[]
+  wishlists        Wishlist[]
+  communityPosts   CommunityPost[]
+  communityLikes   CommunityPostLike[]
+  communityComments CommunityComment[]
 
   @@map("users")
 }
@@ -133,4 +136,46 @@ model Wishlist {
 
   @@unique([userId, cityId])
   @@map("wishlists")
+}
+
+model CommunityPost {
+  id          String              @id @default(uuid())
+  userId      String
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  content     String
+  destination String?
+  category    String              @default("Trip Story") // "Trip Story" | "Travel Tip" | "Food & Dining" | "Destination Review" | "Recommendation"
+  imageUrl    String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  likes       CommunityPostLike[]
+  comments    CommunityComment[]
+
+  @@map("community_posts")
+}
+
+model CommunityPostLike {
+  id        String        @id @default(uuid())
+  postId    String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+
+  @@unique([postId, userId])
+  @@map("community_post_likes")
+}
+
+model CommunityComment {
+  id        String        @id @default(uuid())
+  postId    String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("community_comments")
 }

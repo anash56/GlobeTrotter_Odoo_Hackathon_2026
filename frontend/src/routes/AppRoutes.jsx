@@ -5,6 +5,9 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { LandingPage } from '../pages/LandingPage';
 import { AuthPage } from '../pages/AuthPage';
+import { ExplorePage } from '../pages/ExplorePage';
+import { CityDetailsPage } from '../pages/CityDetailsPage';
+import { CommunityPage } from '../pages/CommunityPage';
 import { CreateTripPage } from '../pages/CreateTripPage';
 import { TripDetailsPage } from '../pages/TripDetailsPage';
 import { BuildItineraryPage } from '../pages/BuildItineraryPage';
@@ -47,12 +50,20 @@ export function AppRoutes() {
       <Route path="/" element={<LandingRouteWrapper />} />
       <Route path="/landing" element={<LandingRouteWrapper />} />
 
+      {/* Screen 8: Explore & Activity/City Search Pages */}
+      <Route path="/explore" element={<ExplorePage />} />
+      <Route path="/destinations" element={<ExplorePage />} />
+      <Route path="/destinations/:cityId" element={<CityDetailsPage />} />
+
+      {/* Screen 10: Community Feed */}
+      <Route path="/community" element={<CommunityPage />} />
+
       {/* Public Auth Routes */}
       <Route path="/login" element={<AuthRouteWrapper />} />
       <Route path="/signup" element={<AuthRouteWrapper />} />
       <Route path="/auth" element={<AuthRouteWrapper />} />
 
-      {/* Main Logged-In User View (Renders Full Landing/Dashboard Page) */}
+      {/* Main Logged-In User View */}
       <Route path="/dashboard" element={<LandingRouteWrapper />} />
 
       {/* Protected Routes inside Shared Layout */}
