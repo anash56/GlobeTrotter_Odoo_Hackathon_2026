@@ -69,8 +69,15 @@ export const getUserTripsService = async (userId) => {
     orderBy: { createdAt: 'desc' },
     include: {
       stops: {
+        orderBy: { sequenceOrder: 'asc' },
         include: {
           city: true,
+          activities: {
+            orderBy: { sequenceOrder: 'asc' },
+            include: {
+              activity: true,
+            },
+          },
         },
       },
     },

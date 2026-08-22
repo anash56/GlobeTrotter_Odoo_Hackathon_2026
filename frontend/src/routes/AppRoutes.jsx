@@ -8,6 +8,10 @@ import { AuthPage } from '../pages/AuthPage';
 import { ExplorePage } from '../pages/ExplorePage';
 import { CityDetailsPage } from '../pages/CityDetailsPage';
 import { CommunityPage } from '../pages/CommunityPage';
+import { DashboardPage } from '../pages/DashboardPage';
+import { ProfilePage } from '../pages/ProfilePage';
+import { MyTripsPage } from '../pages/MyTripsPage';
+import { CalendarPage } from '../pages/CalendarPage';
 import { CreateTripPage } from '../pages/CreateTripPage';
 import { TripDetailsPage } from '../pages/TripDetailsPage';
 import { BuildItineraryPage } from '../pages/BuildItineraryPage';
@@ -27,22 +31,6 @@ function LandingRouteWrapper() {
   );
 }
 
-function AuthRouteWrapper() {
-  const { loginUser } = useAuth();
-  const navigate = useNavigate();
-
-  return (
-    <PublicRoute>
-      <AuthPage
-        onLoginSuccess={(user) => {
-          loginUser(user);
-          navigate('/dashboard');
-        }}
-      />
-    </PublicRoute>
-  );
-}
-
 export function AppRoutes() {
   return (
     <Routes>
@@ -59,14 +47,32 @@ export function AppRoutes() {
       <Route path="/community" element={<CommunityPage />} />
 
       {/* Public Auth Routes */}
-      <Route path="/login" element={<AuthRouteWrapper />} />
-      <Route path="/signup" element={<AuthRouteWrapper />} />
-      <Route path="/auth" element={<AuthRouteWrapper />} />
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <AuthPage />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          <PublicRoute>
+            <AuthPage />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/auth"
+        element={
+          <PublicRoute>
+            <AuthPage />
+          </PublicRoute>
+        }
+      />
 
-      {/* Main Logged-In User View */}
-      <Route path="/dashboard" element={<LandingRouteWrapper />} />
-
-      {/* Protected Routes inside Shared Layout */}
+      {/* Protected Routes inside Shared Dashboard Layout */}
       <Route
         element={
           <ProtectedRoute>
@@ -74,7 +80,13 @@ export function AppRoutes() {
           </ProtectedRoute>
         }
       >
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/my-trips" element={<MyTripsPage />} />
+        <Route path="/trips" element={<MyTripsPage />} />
+        <Route path="/calendar" element={<CalendarPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/trips/create" element={<CreateTripPage />} />
+        <Route path="/create-trip" element={<CreateTripPage />} />
         <Route path="/trips/:id" element={<TripDetailsPage />} />
         <Route path="/trips/:id/itinerary" element={<BuildItineraryPage />} />
       </Route>
